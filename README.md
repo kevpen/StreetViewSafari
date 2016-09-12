@@ -2,7 +2,7 @@
 
 Street View Safari was a webapp which I build on the [Parse](https://www.parse.com/) service. It was hosted at www.streetviewsafari.com for about a year from Summer 2014 to Summer 2015. 
 
-The idea behind SVS was to find interesting panoramas taken by the Google Street View service. Users would log their finds to be voted and commented on. These panoramas could be related but not limied to something funny, interesting road signs and camera glitches.
+The idea behind SVS was to find interesting panoramas taken by the Google Street View service. Users would log their finds to be voted and commented on. These panoramas could be related but not limied to something funny, interesting road signs and camera glitches. It looked like [this](http://imgur.com/a/T0aQH).
 
 The application was composed of two main sections. First, the Google Street View and secondly a map, which showed locations of the snapped locations.
 
