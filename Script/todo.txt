@@ -1,0 +1,20 @@
+﻿- oauth fb & goog
+- convert to promises
+- more indepth user options including saved safaris
+
+
+--startup
+---5 requests
+
+--click on map
+---2 requests
+
+--pan
+---1 request
+
+--save safari
+---7 requests
+
+--load safari
+---4 requests
+----with caching, down to 3

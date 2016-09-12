@@ -1,0 +1,319 @@
+﻿<!--
+    favicon modified from https://www.iconfinder.com/krasnoyarsk used under Creative Commons http://creativecommons.org/licenses/by-sa/3.0/
+
+    fourbyfour icon: http://mapicons.nicolasmollet.com/category/markers/transportation/road-transportation/
+    360 icon: http://mapicons.nicolasmollet.com/markers/media/360-photo/
+    used under the creative commons 3
+
+    Icons made by Freepic from http://www.flaticon.com is licensed by Creative Commons BY 3.0
+
+    http://creativecommons.org/licenses/by-sa/3.0/
+-->
+
+<html>
+<head>
+    <title>StreetViewSafari</title>
+    <meta name="description" content="Find, log and share locations using Google Maps Street View. The crazy and weird spots are encouraged! Vote on your favorites." />
+    <meta name="google" value="notranslate">
+
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- CSS -->
+    <link rel="stylesheet" type="text/css" href="/Styles/desktop.css">
+
+    <!-- Scripts -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bluebird/2.9.4/bluebird.min.js"></script>
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3.exp&key=AIzaSyD62za6mtus6QvOd61b4jFy5F3j-k_egNU"></script>
+    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/knockout/3.1.0/knockout-min.js"></script>
+    <script type="text/javascript" src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="/Scripts/safari.js"></script>
+    <script type="text/javascript" src="//connect.facebook.net/en_US/sdk.js"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script type="text/javascript" src="http://www.parsecdn.com/js/parse-1.2.18.min.js"></script>
+
+    <!-- Google Analytics -->
+    <script type="text/javascript">
+        (function (i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date(); a = s.createElement(o),
+            m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', 'UA-52298544-1', 'auto');
+        ga('send', 'pageview');
+    </script>
+
+</head>
+<body>
+    <div id="wrapper">
+        <div class="disable" data-bind="css: { disabledsite: disableSite() }"></div>
+
+        <!-- Banner -->
+        <div id="banner" data-bind="visible: !isMobile()">
+            <div class="streetviewsafari-banner">
+                <span class="banner-text">StreetViewSafari</span>
+                <span class="banner-slogan">Finding the best of Google Street View</span>
+            </div>
+            <div class="right">
+                <div id="search-header">
+                    <input type="text" class="searchInput" id="search-input" data-bind="value: searchQuery" />
+                    <button data-bind="click: function(){geocode()}" class="searchButton">></button>
+                </div>
+                <div class="login-signup right clear" data-bind="visible: !loggedIn()">
+                    <section class="border">
+                        <button type="button" data-bind="click: function(){setShowingLoginPanel(true)}">Login</button>
+                        <button type="button" data-bind="click: function(){setShowingSignupPanel(true)}">Sign Up</button>
+                        <button type="button" data-bind="click: function(){setShowingForgotPassword(true)}">Forgot Password?</button>
+                    </section>
+                </div>
+                <div class="logout right clear" data-bind="visible: loggedIn">
+                    <span>Exploring as: </span><span class="span-link-text" data-bind="text: userViewModel.userName, click: function(){setShowingUserPanel(true)}"></span>
+                    <span>(</span><span data-bind="text: userViewModel.score"></span><span>)</span>
+                    <section class="border">
+                        <button type="button" onclick="safariApp.logout()">logout</button>
+                    </section>
+                </div>
+            </div>
+            <div class="menu">
+                <span class="span-link-text">About</span>
+                <span>|</span>
+                <span class="span-link-text">Top 10</span>
+                <span>|</span>
+                <span class="span-link-text">Settings</span>
+            </div>
+        </div>
+        <!-- End Banner -->
+
+        <!-- Info Display -->
+        <div class="info-display" data-bind="visible: !isMobile(), css: { infoDisplayMinify:  !showingExisting()}">
+            <section class="border">
+                <button class="right next-button" type="button" data-bind="click: function(){showNext()}">&gt;&gt;</button>
+                <button class="right" type="button" data-bind="click: function(){showPrevious()}">&lt;&lt;</button>
+            </section>
+            <div class="new-safari" data-bind="visible: !showingExisting()">
+                <section class="border">
+                    <button id="log-safari-button" type="button" data-bind="click: function(){logSafari()}">Log your find</button>
+                </section>
+            </div>
+            <div class="existing-safari" data-bind="visible: showingExisting">
+                <div class="vote-container">
+                    <div class="up-vote vote" title="Up Vote" data-bind="css: { highlightUpVoteButton: safariViewModel.upVote }, click: function(){safariViewModel.handleUpVote()}"></div>
+                    <div class="down-vote vote" title="Down Vote" data-bind="css: { highlightDownVoteButton: safariViewModel.downVote }, click: function(){safariViewModel.handleDownVote()}"></div>
+                </div>
+                <div class="explored-score-container">
+                    <span>Explored By: </span><span data-bind="text: safariViewModel.userName"></span>
+                    <div class="trash-can" title="Delete" data-bind="visible: safariViewModel.userOwned(), click: function(){safariViewModel.handleDelete()}"></div>
+                    <div class="score-container">
+                        <span>Score: </span><span data-bind="text: safariViewModel.score"></span>
+                    </div>
+                </div>
+                <div class="share-link">
+                    <label>Share:</label>
+                    <span>
+                        <input id="share-link" class="share-link-text" type="text" data-bind="value: safariViewModel.link" readonly="readonly" />
+                    </span>
+                </div>
+                <div class="comments">
+                    <ul data-bind="template: { name: 'commentTemplate', foreach: safariViewModel.comments, as: 'comment' }"></ul>
+                    <script type="text/html" id="commentTemplate">
+                        <li class="comment">
+                            <div class="comment-title">
+                                <span>Posted by: </span><span data-bind="text: userName, attr: {title: date}"></span>
+                            </div>
+                            <div class="comment-body">
+                                <span data-bind="text: commentText"></span>
+                            </div>
+                        </li>
+                    </script>
+                </div>
+                <div class="new-comment">
+                    <textarea data-bind="value: safariViewModel.commentText"></textarea>
+                    <section class="border">
+                        <button id="comment-button" type="button" data-bind="click: function(){safariViewModel.saveComment()}">Comment</button>
+                    </section>
+                </div>
+                <div class="expired" data-bind="visible: expired()">
+                    <span title="Google has replaced this Safari with newer imagery" class="error-text">Expired</span>
+                </div>
+            </div>
+        </div>
+        <!-- End Info Display -->
+        <!-- Street View and Map Area -->
+        <div id="main-area">
+            <div class="panorama-container" id="panorama">
+                <div class="expander-container" data-bind="click: function(){toggleExpanded()}">
+                    <span class="expander" data-bind="text: expanderText"></span>
+                </div>
+            </div>
+
+            <div class="map-container" id="map-canvas"></div>
+            <div id="status-wrapper">
+                <span id="flash-status" data-bind="text: statusText"></span>
+            </div>
+        </div>
+        <!-- End Street View and Map Area -->
+
+        <!-- Mobile Viewing Controls -->
+        <div class="nav-button-wrapper nav-next" data-bind="visible: isMobile()">
+            <section class="border">
+                <button class="mobile-next-button" type="button" data-bind="click: function(){showNext()}">&gt;&gt;</button>
+            </section>
+        </div>
+        <div class="nav-button-wrapper nav-prev" data-bind="visible: isMobile()">
+            <section class="border">
+                <button class="mobile-previous-button" type="button" data-bind="click: function(){showPrevious()}">&lt;&lt;</button>
+            </section>
+        </div>
+        <!-- End Mobile Viewing Controls -->
+
+        <!--Modal Form -->
+        <div class="options-panel" data-bind="visible: disableSite()">
+            <span class="close-button" data-bind="click: function(){closeOpenModal()}">x</span>
+
+            <!-- Login -->
+            <div class="options-sub-form" data-bind="visible: showingLoginPanel()">
+                <div class="form-desc">
+                    <span>Login with a StreetViewSafari account.</span>
+                </div>
+                <div class="form-line">
+                    <label for="user">Username: </label><input class="form-input" data-bind="value: enteredUserName" type="text" id="user" />
+                </div>
+                <div class="form-line">
+                    <label for="password">Password: </label><input class="form-input" data-bind="value: enteredPassword" type="password" id="password" />
+                </div>
+                <div class="form-line">
+                    <span class="error-text right" data-bind="text: subFormNotificationText()"></span>
+                </div>
+                <div class="form-line">
+                    <section class="border">
+                        <button class="right" type="button" onclick="safariApp.login()">Login</button>
+                    </section>
+                </div>
+                <div class="form-line">
+                    <span>Or let Facebook do the dirty work.</span>
+                </div>
+                <div class="form-line">
+                    <section class="border">
+                        <button class="right" type="button" onclick="safariApp.handleFacebookLogin()">Login with Facebook</button>
+                    </section>
+                </div>
+            </div>
+
+            <!-- User Panel -->
+            <div class="reset-form options-sub-form" data-bind="visible: showingUserPanel()">
+                <div class="form-desc">
+                    <span>Reset your StreetViewSafari password.</span>
+                </div>
+                <div class=" form-line">
+                    <label for="newpassword">New Password: </label><input class="form-input" data-bind="value: enteredNewPassword" type="password" id="newpassword" />
+                </div>
+                <div class="form-line">
+                    <span class="forgot-password-status right" data-bind="text: subFormNotificationText"></span>
+                </div>
+                <div class="form-line">
+                    <section class="border">
+                        <button class="right" type="button" onclick="safariApp.resetPassword()">Reset Password</button>
+                    </section>
+                </div>
+                <div data-bind="visible: !userViewModel.isFacebookUser()">
+                    <div class="form-desc">
+                        <span>Link your StreetViewSafari account to a Facebook account.</span>
+                    </div>
+                    <div class="form-line">
+                        <section class="border">
+                            <button class="right" type="button" onclick="safariApp.linkFacebook()">Link Facebook</button>
+                        </section>
+                    </div>
+                </div>
+                <div data-bind="visible: userViewModel.isFacebookUser()">
+                    <div class="form-desc">
+                        <span>Your account is currently linked. Unlink your StreetViewSafari account from a Facebook account.</span>
+                    </div>
+                    <div class="form-line">
+                        <section class="border">
+                            <button class="right" type="button" onclick="safariApp.unlinkFacebook()">Unlink Facebook</button>
+                        </section>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Signup -->
+            <div class="signup-form options-sub-form" data-bind="visible: showingSignupPanel()">
+                <div class="form-desc">
+                    <span>Create a StreetViewSafari account.</span>
+                </div>
+                <div class="form-line">
+                    <label for="user">Username: </label><input class="form-input" data-bind="value: enteredUserName" type="text" id="user" />
+                </div>
+                <div class="form-line">
+                    <label for="email">Email: </label><input class="form-input" data-bind="value: enteredEmail" type="text" id="email" />
+                </div>
+                <div class="form-line">
+                    <label for="password">Password: </label><input class="form-input" data-bind="value: enteredPassword" type="password" id="password" />
+                </div>
+                <div class="form-line">
+                    <span class="error-text right" data-bind="text: subFormNotificationText"></span>
+                </div>
+                <div class="form-line">
+                    <section class="border">
+                        <button class="right" type="button" onclick="safariApp.signup()">Sign Up</button>
+                    </section>
+                </div>
+                <div class="form-line">
+                    <span>Or let Facebook do the dirty work.</span>
+                </div>
+                <div class="form-line">
+                    <section class="border">
+                        <button class="right" type="button" onclick="safariApp.handleFacebookLogin()">Sign Up with Facebook</button>
+                    </section>
+                </div>
+                <div class="form-desc">
+                    <span>*StreetViewSafari collects anonymous data on how you use the site using Google Analytics. Nothing that identifies you personally is stored.</span>
+                </div>
+            </div>
+
+            <!-- Forgot password -->
+            <div class="forgot-password-form options-sub-form" data-bind="visible: showingForgotPassword()">
+                <div class="form-desc">
+                    <span>If you signed up with a StreetViewSafari account, enter your email and click 'submit'. You will receive an email link to reset your password.</span>
+                </div>
+                <div class="form-line">
+                    <label for="email">Email: </label><input class="form-input" data-bind="value: enteredForgotEmail" type="text" id="forgotemail" />
+                </div>
+                <div class="form-line">
+                    <span class="error-text right" data-bind="text: subFormNotificationText"></span>
+                </div>
+                <div class="form-line">
+                    <section class="border">
+                        <button class="right" type="button" onclick="safariApp.forgotPassword()">Submit</button>
+                    </section>
+                </div>
+            </div>
+
+            <!-- Facebook username selection -->
+            <div class="facebook-signup options-sub-form" data-bind="visible: showingFacebookSignup()">
+                <div class="form-desc">
+                    <span>Thanks for singing up! Please choose a username and password for your StreetViewSafari account. You can still use your Facebook to login each time. You can also unlink this Facebook account at any time in the future.</span>
+                </div>
+                <div class="form-line">
+                    <label for="username">Username: </label><input class="form-input" data-bind="value: enteredUserName" type="text" id="username" />
+                </div>
+                <div class="form-line">
+                    <label for="password">Password: </label><input class="form-input" data-bind="value: enteredPassword" type="password" id="password" />
+                </div>
+                <div class="form-line">
+                    <span class="error-text right" data-bind="text: subFormNotificationText"></span>
+                </div>
+                <div class="form-line">
+                    <section class="border">
+                        <button class="right" type="button" onclick="safariApp.setFacebookUserNamePassword()">Save</button>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="fb-root"></div>
+</body>
+</html>
