@@ -10,11 +10,11 @@ The application was composed of two main sections. First, the Google Street View
 * Don't tie yourself to a service. Use interfaces so that you can switch data providers.
 * Google Street View updates frequently and you cannot access historical images using the Maps API. There was no realible way to know when the images were updated and the context of the original panorama lost.
 
-## Tecnhologies used:
+## Technologies used:
 * Written in Typescript
 * Facebook Parse API for user and data management
 * Knockout for binding engine
 * Promises (Bluebird)
 * Google Maps JS API
 
-The project was originally stored in a private repo by hosted by [Jason](https://github.com/jasonscharf) who helped me get up and running with Git.
+The project was originally stored in a private repo owned by [Jason](https://github.com/jasonscharf) who helped me get up and running with Git.
